@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MinimalApi.Infrastructure.Persistence
 {
-    internal class AuthDbContext
+    public class AuthDbContext
     {
     }
 }
