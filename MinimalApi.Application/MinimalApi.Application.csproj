@@ -10,4 +10,8 @@
     <ProjectReference Include="..\MinimalApi.Domain\MinimalApi.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\" />
+  </ItemGroup>
+
 </Project>
