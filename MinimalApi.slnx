@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="MinimalApi.Application/MinimalApi.Application.csproj" />
+  <Project Path="MinimalApi.Domain/MinimalApi.Domain.csproj" />
+  <Project Path="MinimalApi.Infrastructure/MinimalApi.Infrastructure.csproj" />
+  <Project Path="MinimalApi.Tests/MinimalApi.Tests.csproj" />
+  <Project Path="MinimalApi/MinimalApi.csproj" />
+</Solution>
