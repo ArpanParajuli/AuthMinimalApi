@@ -1,20 +1,27 @@
-﻿using System;
+﻿using MinimalApi.Domain.Exceptions;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MinimalApi.Domain.ValueObjects
 {
-    internal class Password
+    public class Password
     {
-        public string password { get; }
+        public string Value { get; }
 
         private Password(string password)
         {
-            this.password = password;
+            this.Value = password;
         }
 
         public Password Create(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new DomainException("Password cannot be null or empty");
+            }
+
             return new Password(value);
         }
     }
