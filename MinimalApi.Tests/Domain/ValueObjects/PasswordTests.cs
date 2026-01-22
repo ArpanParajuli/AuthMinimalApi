@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MinimalApi.Tests.Domain
+namespace MinimalApi.Tests.Domain.ValueObjects
 {
-    public class UserEntityTest
+    internal class PasswordTests
     {
     }
 }

@@ -15,7 +15,7 @@ namespace MinimalApi.Domain.ValueObjects
             this.Value = password;
         }
 
-        public Password Create(string value)
+        public static Password Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {

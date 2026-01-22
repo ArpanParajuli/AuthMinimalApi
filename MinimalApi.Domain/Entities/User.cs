@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MinimalApi.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Text;
-
-using MinimalApi.Domain.ValueObjects;
+using MinimalApi.Domain.Exceptions;
 
 namespace MinimalApi.Domain.Entities
 {
@@ -14,9 +14,9 @@ namespace MinimalApi.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 
     public class User : BaseEntity
@@ -31,8 +31,8 @@ namespace MinimalApi.Domain.Entities
 
         public User(Password password, Email email)
         {
-            Password = password;
-            Email = email;
+            Password = password ?? throw new DomainException("Password required");
+            Email = email ?? throw new DomainException("Email required");
             IsActive = true;
         }
 
