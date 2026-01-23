@@ -1,9 +1,10 @@
 ﻿using BCrypt.Net;
 using MinimalApi.Application.Abstractions;
+using MinimalApi.Infrastructure.Exceptions;
 
 namespace MinimalApi.Infrastructure.Authentication;
 
-internal sealed class PasswordHasher : IPasswordHasher
+public class PasswordHasher : IPasswordHasher
 {
     // A work factor of 12 is recommended for modern systems
     private const int WorkFactor = 12;
@@ -11,7 +12,7 @@ internal sealed class PasswordHasher : IPasswordHasher
     public string Hash(string password)
     {
         if (string.IsNullOrWhiteSpace(password))
-            throw new ArgumentException("Password cannot be empty.", nameof(password));
+            throw new InfrastructureException("Password cannot be empty");
 
         // BCrypt handles generating a unique salt and prepending it to the hash automatically
         return BCrypt.Net.BCrypt.EnhancedHashPassword(password, WorkFactor);
