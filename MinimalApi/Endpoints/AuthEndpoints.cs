@@ -1,32 +1,38 @@
-﻿using System.Net.NetworkInformation;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MinimalApi.Endpoints
+using MinimalApi.Application.Auth;
+using MinimalApi.Application.Dtos;
+
+namespace MinimalApi.Endpoints;
+
+public static class AuthEndpoints
 {
-    public record RegisterRequest(string Name, string Email, string Password);
-
-    public record LoginRequest(string Email, string Password);
-
-    public static class AuthEndpoints
+    public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        public static void MapAuthEndpoints(this WebApplication app)
+        var group = app.MapGroup("/api/auth");
+
+        // REGISTER
+        group.MapPost("/register", async (
+            [FromBody] RegisterRequestDto request,
+            IAuthService authService,
+            CancellationToken ct) =>
         {
-            app.MapPost("/register", (RegisterRequest request) =>
-            {
-                return Results.Ok(request);
-            });
+            var result = await authService.RegisterAsync(request, ct);
+            return Results.Ok(result);
+        });
 
-            app.MapPost("/login", (LoginRequest request) =>
-            {
-                return Results.Ok("Login user!");
-            });
+        // LOGIN
+        group.MapPost("/login", async (
+            [FromBody] LoginRequestDto request,
+            IAuthService authService,
+            CancellationToken ct) =>
+        {
+            // AuthService throws UnauthorizedAccessException if credentials fail
+            var result = await authService.LoginAsync(request, ct);
+            return Results.Ok(result);
+        });
 
-            app.MapPost("/logout", () =>
-            {
-            });
-
-            app.MapPost("/refresh", () =>
-            {
-            });
-        }
+        // LOGOUT (Client-side usually deletes the JWT, but you can blacklist here)
+        group.MapPost("/logout", () => Results.NoContent());
     }
 }

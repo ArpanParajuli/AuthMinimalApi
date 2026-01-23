@@ -2,9 +2,11 @@
 using MinimalApi.Domain.Entities;
 using MinimalApi.Domain.ValueObjects;
 
+using MinimalApi.Application.Dtos;
+
 namespace MinimalApi.Application.Auth;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -17,31 +19,39 @@ public class AuthService
         _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
     }
 
-    public async Task<string> RegisterAsync(string rawEmail, string rawPassword, CancellationToken ct = default)
+    public async Task<AuthResponse> RegisterAsync(RegisterRequestDto request, CancellationToken ct = default)
     {
-        var email = Email.Create(rawEmail);
+        var email = Email.Create(request.Email);
 
-        // Fixed: Passing email.Value (string) to match your Repository interface
         if (!await _userRepository.IsEmailUniqueAsync(email.Value, ct))
             throw new InvalidOperationException("This email is already registered.");
 
-        var passwordHash = _passwordHasher.Hash(rawPassword);
+        var passwordHash = _passwordHasher.Hash(request.Password);
         var user = new User(Password.Create(passwordHash), email);
 
         await _userRepository.AddAsync(user, ct);
-        return _jwtProvider.Generate(user);
+
+        var token = _jwtProvider.Generate(user);
+
+        return new AuthResponse(
+            token,
+            new UserResponse(user.Pid, user.Email.Value, user.CreatedAt)
+        );
     }
 
-    public async Task<string> LoginAsync(string rawEmail, string rawPassword, CancellationToken ct = default)
+    public async Task<AuthResponse> LoginAsync(LoginRequestDto request, CancellationToken ct = default)
     {
-        var email = Email.Create(rawEmail);
-
+        var email = Email.Create(request.Email);
         var user = await _userRepository.GetByEmailAsync(email.Value, ct);
 
-        // Industry Practice: Use generic "Invalid credentials" for security
-        if (user is null || !_passwordHasher.Verify(rawPassword, user.Password.Value))
+        if (user is null || !_passwordHasher.Verify(request.Password, user.Password.Value))
             throw new UnauthorizedAccessException("Invalid email or password.");
 
-        return _jwtProvider.Generate(user);
+        var token = _jwtProvider.Generate(user);
+
+        return new AuthResponse(
+            token,
+            new UserResponse(user.Pid, user.Email.Value, user.CreatedAt)
+        );
     }
 }

@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MinimalApi.Domain\MinimalApi.Domain.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\" />
+    <ProjectReference Include="..\MinimalApi.Domain\MinimalApi.Domain.csproj" />
   </ItemGroup>
 
 </Project>
