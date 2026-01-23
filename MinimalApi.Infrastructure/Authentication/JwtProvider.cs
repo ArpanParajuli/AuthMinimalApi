@@ -5,6 +5,7 @@ using MinimalApi.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MinimalApi.Infrastructure.Exceptions;
 
 namespace MinimalApi.Infrastructure.Authentication;
 
@@ -19,20 +20,20 @@ public sealed class JwtProvider : IJwtProvider
 
     public string Generate(User user)
     {
-        // 1. Create Claims (Payload)
-        // We use Pid (Guid) instead of the integer Id to prevent ID enumeration attacks.
+        if (user is null)
+        {
+            throw new InfrastructureException("User cannot be null");
+        }
         var claims = new Claim[]
         {
             new(JwtRegisteredClaimNames.Sub, user.Pid.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email.Value),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique ID for this specific token
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-        // 2. Create Security Key & Signing Credentials
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        // 3. Define Token Descriptor
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
@@ -42,7 +43,6 @@ public sealed class JwtProvider : IJwtProvider
             SigningCredentials = credentials
         };
 
-        // 4. Generate and write the token string
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
