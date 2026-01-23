@@ -15,10 +15,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapAuthEndpoints();
+int request = 0;
 
-app.MapGet("/student/{name}", (string name) =>
+app.MapGet("/", () =>
 {
-    return $"hello , {name}";
-}).RequireAuthorization();
+    request++;
+    return Results.Ok(request);
+});
 
 await app.RunAsync();

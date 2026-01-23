@@ -22,6 +22,11 @@ namespace MinimalApi.Domain.ValueObjects
                 throw new DomainException("Email cannot be null or contains White Spaces");
             }
 
+            if (!value.Contains("@"))
+            {
+                throw new DomainException("Email must contain '@'");
+            }
+
             return new Email(value);
         }
     }
