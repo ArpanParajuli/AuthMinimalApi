@@ -1,18 +1,16 @@
 ﻿using MinimalApi.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MinimalApi.Application.Abstractions
+namespace MinimalApi.Application.Abstractions;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<User?> GetByIdAsync(Guid pid, CancellationToken ct = default);
 
-        Task<User?> GetByEmailAsync(string email, CancellationToken ct = default);
+    Task<User?> GetByEmailAsync(string email, CancellationToken ct = default);
 
-        Task AddAsync(User user, CancellationToken ct = default);
+    Task<bool> IsEmailUniqueAsync(string email, CancellationToken ct = default);
 
-        void Update(User user);
-    }
+    Task AddAsync(User user, CancellationToken ct = default);
+
+    void Update(User user);
 }

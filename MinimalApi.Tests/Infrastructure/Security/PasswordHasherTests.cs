@@ -59,5 +59,22 @@ namespace MinimalApi.Tests.Infrastructure.Security
             // Assert
             result.Should().Be(expectedResult);
         }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void PasswordHasher_Verify_NullOrEmptyString_Returns_False(string originalPassword)
+        {
+            // Arrange
+            var passwordHasher = new PasswordHasher();
+
+            var hashedPassword = passwordHasher.Hash("arpandev2823@");
+
+            // Act
+            var result = passwordHasher.Verify(originalPassword, hashedPassword);
+
+            // Assert
+            result.Should().BeFalse();
+        }
     }
 }
