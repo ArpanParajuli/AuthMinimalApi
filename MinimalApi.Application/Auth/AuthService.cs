@@ -1,6 +1,7 @@
 ﻿using MinimalApi.Application.Abstractions;
 using MinimalApi.Domain.Entities;
 using MinimalApi.Domain.ValueObjects;
+using MinimalApi.Application.Exceptions;
 
 using MinimalApi.Application.Dtos;
 
@@ -24,7 +25,7 @@ public class AuthService : IAuthService
         var email = Email.Create(request.Email);
 
         if (!await _userRepository.IsEmailUniqueAsync(email.Value, ct))
-            throw new InvalidOperationException("This email is already registered.");
+            throw new ApplicationExceptions("This email is already registered.");
 
         var passwordHash = _passwordHasher.Hash(request.Password);
         var user = new User(Password.Create(passwordHash), email);
@@ -45,7 +46,7 @@ public class AuthService : IAuthService
         var user = await _userRepository.GetByEmailAsync(email.Value, ct);
 
         if (user is null || !_passwordHasher.Verify(request.Password, user.Password.Value))
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new ApplicationExceptions("Invalid email or password.");
 
         var token = _jwtProvider.Generate(user);
 

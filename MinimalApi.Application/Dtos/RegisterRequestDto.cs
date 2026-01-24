@@ -7,5 +7,5 @@ namespace MinimalApi.Application.Dtos
     public record RegisterRequestDto(
       string Email,
       string Password,
-      string? FullName = null); // Optional additional fields
+      string FullName);
 }
